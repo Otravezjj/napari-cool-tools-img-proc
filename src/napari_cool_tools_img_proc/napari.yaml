@@ -1,0 +1,28 @@
+name: napari-cool-tools-img-proc
+display_name: Napari B-scan/Image Processing 
+contributions:
+  commands:
+    - id: napari-cool-tools-img-proc.make_sample_data
+      python_name: napari_cool_tools_img_proc._sample_data:make_sample_data
+      title: Load sample data from Napari B-scan/Image Processing 
+    - id: napari-cool-tools-img-proc.make_qwidget
+      python_name: napari_cool_tools_img_proc._widget:ExampleQWidget
+      title: Make example QWidget
+    - id: napari-cool-tools-img-proc.make_magic_widget
+      python_name: napari_cool_tools_img_proc._widget:example_magic_widget
+      title: Make example magic widget
+    - id: napari-cool-tools-img-proc.make_func_widget
+      python_name: napari_cool_tools_img_proc._widget:example_function_widget
+      title: Make example function widget
+  sample_data:
+    - command: napari-cool-tools-img-proc.make_sample_data
+      display_name: Napari B-scan/Image Processing 
+      key: unique_id.1
+  widgets:
+    - command: napari-cool-tools-img-proc.make_qwidget
+      display_name: Example QWidget
+    - command: napari-cool-tools-img-proc.make_magic_widget
+      display_name: Example Magic Widget
+    - command: napari-cool-tools-img-proc.make_func_widget
+      autogenerate: true
+      display_name: Example Function Widget
