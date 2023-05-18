@@ -1,11 +1,11 @@
 __version__ = "0.0.1"
-from ._widget import ExampleQWidget, example_magic_widget
-import napari
-
 
 __all__ = (
-    "ExampleQWidget",
-    "example_magic_widget",
-)
+    )
+
+import napari
+import torch
+import kornia
 
 viewer = napari.current_viewer()
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")

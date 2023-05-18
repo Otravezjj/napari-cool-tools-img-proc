@@ -2,6 +2,9 @@ name: napari-cool-tools-img-proc
 display_name: Napari B-scan/Image Processing 
 contributions:
   commands:
+    - id: napari-cool-tools-img-proc.diff_of_gaus
+      title: Band-pass (Difference of Gaussian)
+      python_name: napari_cool_tools_img_proc._denoise:diff_of_gaus
     - id: napari-cool-tools-img-proc.normalize
       python_name: napari_cool_tools_img_proc._normalization:normalize_in_range
       title: Normailze Values to Range
@@ -11,19 +14,16 @@ contributions:
     - id: napari-cool-tools-img-proc.adjust_log
       python_name: napari_cool_tools_img_proc._luminance:adjust_log
       title: Log Adjustment
-    - id: napari-cool-tools-img-proc.diff_of_gaus
-      title: Band-pass (Difference of Gaussian)
-      python_name: napari_cool_tools_img_proc._denoise:diff_of_gaus
-    - id: napari-cool-tools-img-proc.make_qwidget
-      python_name: napari_cool_tools_img_proc._widget:ExampleQWidget
-      title: Make example QWidget
-    - id: napari-cool-tools-img-proc.make_magic_widget
-      python_name: napari_cool_tools_img_proc._widget:example_magic_widget
-      title: Make example magic widget
-    - id: napari-cool-tools-img-proc.make_func_widget
-      python_name: napari_cool_tools_img_proc._widget:example_function_widget
-      title: Make example function widget
+    - id: napari-cool-tools-img-proc.clahe
+      title: Contrast Limited Adaptive Histogram Equalization
+      python_name: napari_cool_tools_img_proc._equalization:clahe
+    - id: napari-cool-tools-img-proc.denoise_tv
+      title: Total Variation Denoising (Chambolle)
+      python_name: napari_cool_tools_img_proc._denoise:denoise_tv
   widgets:
+    - command: napari-cool-tools-img-proc.diff_of_gaus
+      display_name: Band-pass (DoG)
+      autogenerate: true
     - command: napari-cool-tools-img-proc.normalize
       autogenerate: true
       display_name: Normalize (Range)
@@ -33,13 +33,9 @@ contributions:
     - command: napari-cool-tools-img-proc.adjust_log
       autogenerate: true
       display_name: Log Adjust
-    - command: napari-cool-tools-img-proc.diff_of_gaus
-      display_name: Band-pass (DoG)
+    - command: napari-cool-tools-img-proc.clahe
+      display_name: contrast (CLAHE)
       autogenerate: true
-    - command: napari-cool-tools-img-proc.make_qwidget
-      display_name: Example QWidget
-    - command: napari-cool-tools-img-proc.make_magic_widget
-      display_name: Example Magic Widget
-    - command: napari-cool-tools-img-proc.make_func_widget
+    - command: napari-cool-tools-img-proc.denoise_tv
+      display_name: TVD (Chambolle)
       autogenerate: true
-      display_name: Example Function Widget
