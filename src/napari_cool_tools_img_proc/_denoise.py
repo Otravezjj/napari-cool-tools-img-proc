@@ -29,7 +29,7 @@ def diff_of_gaus_func(img:Image, low_sigma, high_sigma=None, mode='nearest', cva
     data = img.data.copy()
 
     try:
-        assert data.ndim == 2 or data.ndim == 3, "Only works for data of 2 or 3 diminsions"
+        assert data.ndim == 2 or data.ndim == 3, "Only works for data of 2 or 3 dimensions"
     except AssertionError as e:
         print("An error Occured:", str(e))
     else:
@@ -71,7 +71,7 @@ def denoise_tv_func(data:ImageData, weight:float=0.1): #-> ImageData:
     from skimage.restoration import denoise_tv_chambolle
 
     try:
-        assert data.ndim == 2 or data.ndim == 3, "Only works for data of 2 or 3 diminsions"
+        assert data.ndim == 2 or data.ndim == 3, "Only works for data of 2 or 3 dimensions"
     except AssertionError as e:
         print("An error Occured:", str(e))
     else:

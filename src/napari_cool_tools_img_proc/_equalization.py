@@ -40,7 +40,7 @@ def clahe_func(img:Image, kernel_size=None,clip_limit:float=0.01,nbins=256,norm_
     data = img.data
 
     try:
-        assert data.ndim == 2 or data.ndim == 3, "Only works for data of 2 or 3 diminsions"
+        assert data.ndim == 2 or data.ndim == 3, "Only works for data of 2 or 3 dimensions"
     except AssertionError as e:
         print("An error Occured:", str(e))
     else:
@@ -80,7 +80,7 @@ def clahe_pt_func(img:Image, kernel_size=None,clip_limit:float=40.0,nbins=256,no
     data = img.data.copy()
 
     try:
-        assert data.ndim == 2 or data.ndim == 3, "Only works for data of 2 or 3 diminsions"
+        assert data.ndim == 2 or data.ndim == 3, "Only works for data of 2 or 3 dimensions"
     except AssertionError as e:
         print("An error Occured:", str(e))
     else:
