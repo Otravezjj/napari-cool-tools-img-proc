@@ -9,7 +9,9 @@ from napari.qt.threading import thread_worker
 from napari_cool_tools_img_proc import torch, viewer, device
 
 def normalize_in_range(img: Image, min_val:float = 0.0, max_val:float = 1.0, in_place:bool = True) -> Layer:
-    """Args:
+    """Function to map image/B-scan values to a specific range between min_val and max_val.
+
+    Args:
         img (Image): ndarray representing image data
         min_val (float): minimum value of range that image values are to be mapped to
         max_val (float): maximum value of range that image values are to be mapped to
@@ -23,7 +25,9 @@ def normalize_in_range(img: Image, min_val:float = 0.0, max_val:float = 1.0, in_
 
 @thread_worker(connect={"returned": viewer.add_layer},progress=True)
 def normalize_in_range_thread(img: Image, min_val:float = 0.0, max_val:float = 1.0, in_place:bool = True) -> Layer:
-    """Args:
+    """Function to map image/B-scan values to a specific range between min_val and max_val.
+
+    Args:
         img (Image): ndarray representing image data
         min_val (float): minimum value of range that image values are to be mapped to
         max_val (float): maximum value of range that image values are to be mapped to
@@ -39,7 +43,9 @@ def normalize_in_range_thread(img: Image, min_val:float = 0.0, max_val:float = 1
     return output
 
 def normalize_in_range_func(img: Image, min_val:float = 0.0, max_val:float = 1.0, in_place:bool = True) -> Layer:
-    """Args:
+    """Function to map image/B-scan values to a specific range between min_val and max_val.
+
+    Args:
         img (Image): ndarray representing image data
         min_val (float): minimum value of range that image values are to be mapped to
         max_val (float): maximum value of range that image values are to be mapped to
@@ -68,7 +74,9 @@ def normalize_in_range_func(img: Image, min_val:float = 0.0, max_val:float = 1.0
         return layer
     
 def normalize_in_range_pt_func(img: Image, min_val:float = 0.0, max_val:float = 1.0, in_place:bool = True) -> Layer:
-    """Args:
+    """Function to map image/B-scan values to a specific range between min_val and max_val.
+
+    Args:
         img (Image): ndarray representing image data
         min_val (float): minimum value of range that image values are to be mapped to
         max_val (float): maximum value of range that image values are to be mapped to
@@ -98,7 +106,9 @@ def normalize_in_range_pt_func(img: Image, min_val:float = 0.0, max_val:float = 
         return layer
     
 def normalize_data_in_range_pt_func(img: ImageData, min_val:float = 0.0, max_val:float = 1.0) -> ImageData:
-    """Args:
+    """Function to map image/B-scan values to a specific range between min_val and max_val.
+
+    Args:
         img (Image): ndarray representing image data
         min_val (float): minimum value of range that image values are to be mapped to
         max_val (float): maximum value of range that image values are to be mapped to
