@@ -1,5 +1,5 @@
 """
-This module is contains code for equalizing image values
+This module contains code for equalizing image values
 """
 from tqdm import tqdm
 from napari.utils.notifications import show_info

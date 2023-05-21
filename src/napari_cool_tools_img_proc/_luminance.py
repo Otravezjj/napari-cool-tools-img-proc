@@ -1,5 +1,5 @@
 """
-This module is contains code for adjusting image luminance
+This module contains code for adjusting image luminance
 """
 
 from napari.utils.notifications import show_info

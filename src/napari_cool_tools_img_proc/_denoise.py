@@ -1,5 +1,5 @@
 """
-This module is contains code for denoising images
+This module contains code for denoising images
 """
 
 from napari.utils.notifications import show_info

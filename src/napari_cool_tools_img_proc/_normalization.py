@@ -1,5 +1,5 @@
 """
-This module is contains code for normalizing image values
+This module contains code for normalizing image values
 """
 #import torch
 from napari.utils.notifications import show_info
