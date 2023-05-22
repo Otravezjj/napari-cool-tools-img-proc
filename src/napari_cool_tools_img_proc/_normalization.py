@@ -105,14 +105,15 @@ def normalize_in_range_pt_func(img: Image, min_val:float = 0.0, max_val:float = 
         layer = Layer.create(norm_data.detach().cpu().numpy(),add_kwargs,layer_type)
         return layer
     
-def normalize_data_in_range_pt_func(img: ImageData, min_val:float = 0.0, max_val:float = 1.0) -> ImageData:
+    
+def normalize_data_in_range_pt_func(img: ImageData, min_val:float = 0.0, max_val:float = 1.0, numpy_out:bool = True) -> ImageData:
     """Function to map image/B-scan values to a specific range between min_val and max_val.
 
     Args:
         img (Image): ndarray representing image data
         min_val (float): minimum value of range that image values are to be mapped to
         max_val (float): maximum value of range that image values are to be mapped to
-        in_place (bool): flag indicating whether to modify the image in place or return new image
+        numpy_out (bool): flag indicating whether to return torch tensor or numpy ndarray
 
     Returns:
         Image with normalized values mapped between range of min_val and max_val is in_place
@@ -121,4 +122,10 @@ def normalize_data_in_range_pt_func(img: ImageData, min_val:float = 0.0, max_val
     data = img.copy()
     pt_data = torch.tensor(data,device=device)
     norm_data = (max_val - min_val) * ((pt_data-pt_data.min())/ (pt_data.max()-pt_data.min())) + min_val
-    return norm_data.detach().cpu().numpy()
+
+    if numpy_out:
+        out = norm_data.detach().cpu().numpy()
+    else:
+        out = norm_data
+
+    return out
