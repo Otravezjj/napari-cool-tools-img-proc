@@ -6,7 +6,7 @@ from napari.utils.notifications import show_info
 from napari.layers import Image, Layer
 from napari.types import ImageData
 from napari.qt.threading import thread_worker
-from napari_cool_tools_io import torch, viewer, device
+from napari_cool_tools_io import torch, viewer, device, memory_stats
 
 def normalize_in_range(img: Image, min_val:float = 0.0, max_val:float = 1.0, in_place:bool = True) -> Layer:
     """Function to map image/B-scan values to a specific range between min_val and max_val.
@@ -39,6 +39,8 @@ def normalize_in_range_thread(img: Image, min_val:float = 0.0, max_val:float = 1
     show_info(f"Normalization thread started")
     #output = normalize_in_range_func(img=img,min_val=min_val,max_val=max_val,in_place=in_place)
     output = normalize_in_range_pt_func(img=img,min_val=min_val,max_val=max_val,in_place=in_place)
+    torch.cuda.empty_cache()
+    memory_stats()
     show_info(f"Normalization thread completed")
     return output
 

@@ -5,7 +5,7 @@ This module contains code for adjusting image luminance
 from napari.utils.notifications import show_info
 from napari.layers import Image, Layer
 from napari.qt.threading import thread_worker
-from napari_cool_tools_io import torch,viewer,device
+from napari_cool_tools_io import torch,viewer,device,memory_stats
 
 def adjust_gamma(img:Image, gamma:float=1, gain:float=1) -> Layer:
     """Pass through function of skimage.exposure adjust_log function.
@@ -121,6 +121,8 @@ def adjust_log_thread(img:Image, gain:float=1, inv:bool=False, gpu:bool=True) ->
     show_info(f"Adjust log thread started")
     if gpu:
         output = adjust_log_pt_func(img=img,gain=gain,inv=inv)
+        torch.cuda.empty_cache()
+        memory_stats()
     else:
         output = adjust_log_func(img=img,gain=gain,inv=inv)
     show_info(f"Adjust log thread completed")
