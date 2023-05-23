@@ -16,7 +16,7 @@ def adjust_gamma(img:Image, gamma:float=1, gain:float=1) -> Layer:
         gain (float): Constant multiplier.
         
     Returns:
-        Logarithm corrected output image with '_LC' suffix added to name."""
+        Gamma corrected output image with '_LC' suffix added to name."""
     
     adjust_gamma_thread(img=img,gamma=gamma,gain=gain)
     return
@@ -31,7 +31,7 @@ def adjust_gamma_thread(img:Image, gamma:float=1, gain:float=1) -> Layer:
         gain (float): Constant multiplier.
         
     Returns:
-        Logarithm corrected output image with '_LC' suffix added to name."""
+        Gamma corrected output image with '_LC' suffix added to name."""
     
     show_info(f"Adjust gamma thread started")
     output = adjust_gamma_func(img=img,gamma=gamma,gain=gain)
@@ -47,8 +47,34 @@ def adjust_gamma_func(img:Image, gamma:float=1, gain:float=1) -> Layer:
         gain (float): Constant multiplier.
         
     Returns:
-        Logarithm corrected output image with '_LC' suffix added to name."""
+        Gamma corrected output image with '_LC' suffix added to name."""
     
+    from skimage.exposure import adjust_gamma
+    from tqdm import tqdm
+
+    data = img.data.copy()
+
+    try:
+        assert data.ndim == 2 or data.ndim == 3, "Only works for data of 2 or 3 diminsions"
+    except AssertionError as e:
+        print("An error Occured:", str(e))
+    else:
+        
+        name = f"{img.name}_LC"
+        layer_type = "image"
+        add_kwargs = {"name": f"{name}"}
+
+        if data.ndim == 2:
+            log_corrected = adjust_gamma(data,gamma=gamma,gain=gain)
+            layer = Layer.create(log_corrected,add_kwargs,layer_type)
+        elif data.ndim == 3:
+            for i in tqdm(range(len(data)),desc="Gamma Correction"):
+                data[i] = adjust_gamma(data[i],gamma=gamma,gain=gain)
+
+            layer = Layer.create(data,add_kwargs,layer_type)
+
+    return layer
+    '''
     from skimage.exposure import adjust_gamma
 
     data = img.data
@@ -61,6 +87,7 @@ def adjust_gamma_func(img:Image, gamma:float=1, gain:float=1) -> Layer:
     layer = Layer.create(gamma_corrected,add_kwargs,layer_type)
 
     return layer
+    '''
     
 
 def adjust_log(img:Image, gain:float=1, inv:bool=False, gpu:bool=True) -> Layer:
@@ -129,7 +156,7 @@ def adjust_log_func(img:Image, gain:float=1, inv:bool=False) -> Layer:
             log_corrected = adjust_log(data,gain=gain,inv=inv)
             layer = Layer.create(log_corrected,add_kwargs,layer_type)
         elif data.ndim == 3:
-            for i in tqdm(range(len(data)),desc="Current image"):
+            for i in tqdm(range(len(data)),desc="Log Correction"):
                 data[i] = adjust_log(data[i],gain=gain,inv=inv)
 
             layer = Layer.create(data,add_kwargs,layer_type)

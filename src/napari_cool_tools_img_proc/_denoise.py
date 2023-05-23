@@ -41,7 +41,7 @@ def diff_of_gaus_func(img:Image, low_sigma, high_sigma=None, mode='nearest', cva
             filtered_image = difference_of_gaussians(data,low_sigma,high_sigma,mode=mode,cval=cval,channel_axis=channel_axis,truncate=truncate)
             layer = Layer.create(filtered_image,add_kwargs,layer_type)
         elif data.ndim == 3:
-            for i in tqdm(range(len(data)),desc="Current image"):
+            for i in tqdm(range(len(data)),desc="Band-pass(DoG)"):
                 data[i] = difference_of_gaussians(data[i],low_sigma,high_sigma,mode=mode,cval=cval,channel_axis=channel_axis,truncate=truncate)
 
             layer = Layer.create(data,add_kwargs,layer_type)
@@ -80,7 +80,7 @@ def denoise_tv_func(data:ImageData, weight:float=0.1): #-> ImageData:
         if data.ndim == 2:
             tvd = denoise_tv_chambolle(tvd, weight=weight,eps =0.0002)
         elif data.ndim == 3:
-            for i in tqdm(range(len(data)),desc="Current image"):
+            for i in tqdm(range(len(data)),desc="Denoise(TV)"):
                 tvd[i] = denoise_tv_chambolle(tvd[i], weight=weight,eps =0.0002)
 
         return tvd

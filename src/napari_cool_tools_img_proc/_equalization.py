@@ -54,7 +54,7 @@ def clahe_func(img:Image, kernel_size=None,clip_limit:float=0.01,nbins=256,norm_
             img_out = init_out.astype(dtype_in)
             layer = Layer.create(img_out,add_kwargs,layer_type)
         elif data.ndim == 3:
-            for i in tqdm(range(len(data)),desc="Current image"):
+            for i in tqdm(range(len(data)),desc="CLAHE"):
                 norm_data[i] = equalize_adapthist(norm_data[i],kernel_size=kernel_size,clip_limit=clip_limit,nbins=nbins)
             
             img_out = norm_data.astype(dtype_in)
@@ -95,7 +95,7 @@ def clahe_pt_func(img:Image, kernel_size=None,clip_limit:float=40.0,nbins=256,no
             out_data = equalized.detach().cpu().numpy()
             layer = Layer.create(out_data,add_kwargs,layer_type)
         elif data.ndim == 3:
-            for i in tqdm(range(len(pt_data)),desc="Current image"):
+            for i in tqdm(range(len(pt_data)),desc="CLAHE(PT)"):
                 pt_data[i] = equalize_clahe(pt_data[i],clip_limit)
             
             out_data = pt_data.detach().cpu().numpy()
