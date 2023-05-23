@@ -6,7 +6,7 @@ from napari.utils.notifications import show_info
 from napari.layers import Image, Layer
 from napari.types import ImageData
 from napari.qt.threading import thread_worker
-from napari_cool_tools_img_proc import viewer
+from napari_cool_tools_io import viewer
 from tqdm import tqdm
 
 def diff_of_gaus(img:Image, low_sigma:float=1.0, high_sigma:float=20.0, mode='nearest',cval=0, channel_axis=None, truncate=4.0) -> Layer:

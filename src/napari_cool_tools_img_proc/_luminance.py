@@ -5,7 +5,7 @@ This module contains code for adjusting image luminance
 from napari.utils.notifications import show_info
 from napari.layers import Image, Layer
 from napari.qt.threading import thread_worker
-from napari_cool_tools_img_proc import torch,kornia,viewer,device
+from napari_cool_tools_io import torch,viewer,device
 
 def adjust_gamma(img:Image, gamma:float=1, gain:float=1) -> Layer:
     """Pass through function of skimage.exposure adjust_log function.

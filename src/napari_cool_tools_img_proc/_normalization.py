@@ -6,7 +6,7 @@ from napari.utils.notifications import show_info
 from napari.layers import Image, Layer
 from napari.types import ImageData
 from napari.qt.threading import thread_worker
-from napari_cool_tools_img_proc import torch, viewer, device
+from napari_cool_tools_io import torch, viewer, device
 
 def normalize_in_range(img: Image, min_val:float = 0.0, max_val:float = 1.0, in_place:bool = True) -> Layer:
     """Function to map image/B-scan values to a specific range between min_val and max_val.

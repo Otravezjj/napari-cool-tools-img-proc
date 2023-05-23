@@ -5,7 +5,7 @@ from tqdm import tqdm
 from napari.utils.notifications import show_info
 from napari.layers import Image, Layer
 from napari.qt.threading import thread_worker
-from napari_cool_tools_img_proc import torch, viewer, device
+from napari_cool_tools_io import torch, viewer, device
 from napari_cool_tools_img_proc._normalization import normalize_in_range_pt_func
 
 def clahe(img:Image, kernel_size=None,clip_limit:float=0.01,nbins=256,norm_min=0,norm_max=1,gpu:bool=True) -> Layer:
