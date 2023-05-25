@@ -15,10 +15,10 @@ def clahe(img:Image, kernel_size=None,clip_limit:float=0.01,nbins=256,norm_min=0
     return
 
 @thread_worker(connect={"returned": viewer.add_layer},progress=True)
-def clahe_thread(img:Image, kernel_size=None,clip_limit:float=0.01,nbins=256,norm_min=0,norm_max=1,gpu:bool=True) -> Layer:
+def clahe_thread(img:Image, kernel_size=None,clip_limit:float=0.01,nbins=256,norm_min=0,norm_max=1,pt_K:bool=True) -> Layer:
     ''''''
     show_info(f'Autocontrast (CLAHE) thread has started')
-    if gpu:
+    if pt_K:
         output = clahe_pt_func(img=img,kernel_size=kernel_size,clip_limit=clip_limit,nbins=nbins,norm_min=norm_min,norm_max=norm_max)
         torch.cuda.empty_cache()
         memory_stats()
@@ -39,7 +39,7 @@ def clahe_func(img:Image, kernel_size=None,clip_limit:float=0.01,nbins=256,norm_
     # optional layer type argument
     layer_type = "image"
 
-    data = img.data
+    data = img.data.copy()
 
     try:
         assert data.ndim == 2 or data.ndim == 3, "Only works for data of 2 or 3 dimensions"
