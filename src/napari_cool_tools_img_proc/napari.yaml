@@ -20,6 +20,9 @@ contributions:
     - id: napari-cool-tools-img-proc.denoise_tv
       title: Total Variation Denoising (Chambolle)
       python_name: napari_cool_tools_img_proc._denoise:denoise_tv
+    - id: napari-cool-tools-img-proc.bilateral
+      title: Bilateral Filter
+      python_name: napari_cool_tools_img_proc._filters:filter_bilateral
   widgets:
     - command: napari-cool-tools-img-proc.diff_of_gaus
       display_name: Band-pass (DoG)
@@ -38,4 +41,7 @@ contributions:
       autogenerate: true
     - command: napari-cool-tools-img-proc.denoise_tv
       display_name: TVD (Chambolle)
+      autogenerate: true
+    - command: napari-cool-tools-img-proc.bilateral
+      display_name: Bilateral Filter
       autogenerate: true
