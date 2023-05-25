@@ -23,6 +23,9 @@ contributions:
     - id: napari-cool-tools-img-proc.bilateral
       title: Bilateral Filter
       python_name: napari_cool_tools_img_proc._filters:filter_bilateral
+    - id: napari-cool-tools-img-proc.unsharp
+      title: Sharpen (Unsharp Mask)
+      python_name: napari_cool_tools_img_proc._filters:sharpen_um
   widgets:
     - command: napari-cool-tools-img-proc.diff_of_gaus
       display_name: Band-pass (DoG)
@@ -44,4 +47,7 @@ contributions:
       autogenerate: true
     - command: napari-cool-tools-img-proc.bilateral
       display_name: Bilateral Filter
+      autogenerate: true
+    - command: napari-cool-tools-img-proc.unsharp
+      display_name: Sharpen (UM)
       autogenerate: true
