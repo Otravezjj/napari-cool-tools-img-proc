@@ -7,17 +7,17 @@ from napari.layers import Image, Layer
 from napari.qt.threading import thread_worker
 from napari_cool_tools_io import torch,viewer,device,memory_stats
 
-def filter_bilateral(img:Image,disk_size:int=1,s0:int=10,s1:int=10) -> Image:
+def filter_bilateral(img:Image,kernel_size:int=1,s0:int=10,s1:int=10) -> Image:
     ''''''
     u_byte = img_as_ubyte(img)
-    bilat = mean_bilateral(u_byte,disk(disk_size),s0=s0,s1=s1)
+    bilat = mean_bilateral(u_byte,disk(kernel_size),s0=s0,s1=s1)
     return bilat
 
-def filter_median(img:Image,disk_size:int=1,applications:int=1) -> Image:
+def filter_median(img:Image,kernel_size:int=1,applications:int=1) -> Image:
     ''''''
     target = img
     for i in range(applications):
-        img_med = median_filter(target,disk(disk_size))
+        img_med = median_filter(target,disk(kernel_size))
         target = img_med
     return img_med
 
@@ -26,23 +26,53 @@ def sharpen_um(img:Image, radius:float=1.0, amount:float=1.0, preserve_range=Fal
     sharp_img = unsharp_mask(img, radius=radius,amount=amount, preserve_range=preserve_range, channel_axis=channel_axis)
     return sharp_img
 
-def filter_bilateral(img:Image,disk_size:int=3,sc:float=0.1,s0:int=10,s1:int=10):
-    """"""
-    filter_bilateral_thread(img=img,disk_size=disk_size,sc=sc,s0=s0,s1=s1)
+def filter_bilateral(img:Image,kernel_size:int=3,sc:float=0.1,s0:int=10,s1:int=10):
+    """Implementation of bilateral filter function
+    Args:
+        img (Image): Image/Volume to be segmented.
+        kernel_size (int): Dimension of symmetrical kernel for Kornia implementation kernel should be odd number
+        sc (float): sigma_color Standard deviation for grayvalue/color distance (radiometric similarity). A larger value results in averaging of pixels with larger radiometric differences
+        s0 (int): standard deviation of fist dimension of the kernel for range distance. A larger value results in averaging of pixels with larger spatial differences.
+        s1 (int): standard deviation of the 2nd dimension of the kernel for range distance. A larger value results in averaging of pixels with larger spatial differences.
+        
+    Returns:
+        Image Layer that has been bilaterally filtered  with '_Bilat' suffix added to name.
+    """
+    filter_bilateral_thread(img=img,kernel_size=kernel_size,sc=sc,s0=s0,s1=s1)
     return
 
 @thread_worker(connect={"returned": viewer.add_layer},progress=True)
-def filter_bilateral_thread(img:Image,disk_size:int=3,sc:float=0.1,s0:int=10,s1:int=10) -> Image:
-    """"""
+def filter_bilateral_thread(img:Image,kernel_size:int=3,sc:float=0.1,s0:int=10,s1:int=10) -> Image:
+    """Implementation of bilateral filter function
+    Args:
+        img (Image): Image/Volume to be segmented.
+        kernel_size (int): Dimension of symmetrical kernel for Kornia implementation kernel should be odd number
+        sc (float): sigma_color Standard deviation for grayvalue/color distance (radiometric similarity). A larger value results in averaging of pixels with larger radiometric differences
+        s0 (int): standard deviation of fist dimension of the kernel for range distance. A larger value results in averaging of pixels with larger spatial differences.
+        s1 (int): standard deviation of the 2nd dimension of the kernel for range distance. A larger value results in averaging of pixels with larger spatial differences.
+        
+    Returns:
+        Image Layer that has been bilaterally filtered  with '_Bilat' suffix added to name.
+    """
     show_info(f'Bilateral Filter thread has started')
-    output = filter_bilateral_pt_func(img=img,disk_size=disk_size,sc=sc,s0=s0,s1=s1)
+    output = filter_bilateral_pt_func(img=img,kernel_size=kernel_size,sc=sc,s0=s0,s1=s1)
     show_info(f'Bilateral Filter thread has completed')
     
     return output
 
 
-def filter_bilateral_pt_func(img:Image,disk_size:int=3,sc:float=0.1,s0:int=10,s1:int=10,border_type:str='reflect',color_distance_type:str='l1') -> Image:
-    """"""
+def filter_bilateral_pt_func(img:Image,kernel_size:int=3,sc:float=0.1,s0:int=10,s1:int=10,border_type:str='reflect',color_distance_type:str='l1') -> Image:
+    """Implementation of bilateral filter function
+    Args:
+        img (Image): Image/Volume to be segmented.
+        kernel_size (int): Dimension of symmetrical kernel for Kornia implementation kernel should be odd number
+        sc (float): sigma_color Standard deviation for grayvalue/color distance (radiometric similarity). A larger value results in averaging of pixels with larger radiometric differences
+        s0 (int): standard deviation of fist dimension of the kernel for range distance. A larger value results in averaging of pixels with larger spatial differences.
+        s1 (int): standard deviation of the 2nd dimension of the kernel for range distance. A larger value results in averaging of pixels with larger spatial differences.
+        
+    Returns:
+        Image Layer that has been bilaterally filtered  with '_Bilat' suffix added to name.
+    """
     
     from kornia.filters import bilateral_blur
     
@@ -66,13 +96,13 @@ def filter_bilateral_pt_func(img:Image,disk_size:int=3,sc:float=0.1,s0:int=10,s1
 
         if data.ndim == 2:
             in_data = pt_data.unsqueeze(0).unsqueeze(0)
-            blur_data = bilateral_blur(in_data,(disk_size,disk_size),sc,(s0,s1)).squeeze()
+            blur_data = bilateral_blur(in_data,(kernel_size,kernel_size),sc,(s0,s1)).squeeze()
             out_data = blur_data.detach().cpu().numpy()
             layer = Layer.create(out_data,add_kwargs,layer_type)
         elif data.ndim == 3:
             for i in tqdm(range(len(pt_data)),desc="Bilateral Blur"):
                 in_data = pt_data[i].unsqueeze(0).unsqueeze(0)
-                pt_data[i] = bilateral_blur(in_data,(disk_size,disk_size),sc,(s0,s1)).squeeze()
+                pt_data[i] = bilateral_blur(in_data,(kernel_size,kernel_size),sc,(s0,s1)).squeeze()
 
             out_data = pt_data.detach().cpu().numpy()
             layer = Layer.create(out_data,add_kwargs,layer_type)
