@@ -61,9 +61,9 @@ def normalize_in_range_func(img: Image, min_val:float = 0.0, max_val:float = 1.0
     norm_data = (max_val - min_val) * ((data-data.min())/ (data.max()-data.min())) + min_val
 
     if in_place:
-        name = img.name
-        new_name = f"pre_norm_{img.name}"
-        img.name = new_name
+        name = f"{img.name}_Norm_{min_val}-{max_val}"
+        #new_name = f"pre_norm_{img.name}"
+        #img.name = new_name
         add_kwargs = {"name":name}
         layer_type = 'image'
         layer = Layer.create(norm_data,add_kwargs,layer_type)
@@ -93,9 +93,9 @@ def normalize_in_range_pt_func(img: Image, min_val:float = 0.0, max_val:float = 
     norm_data = (max_val - min_val) * ((pt_data-pt_data.min())/ (pt_data.max()-pt_data.min())) + min_val
 
     if in_place:
-        name = img.name
-        new_name = f"pre_norm_{img.name}"
-        img.name = new_name
+        name = f"{img.name}_Norm_{min_val}-{max_val}"
+        #new_name = f"pre_norm_{img.name}"
+        #img.name = new_name
         add_kwargs = {"name":name}
         layer_type = 'image'
         layer = Layer.create(norm_data.detach().cpu().numpy(),add_kwargs,layer_type)
