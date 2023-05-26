@@ -90,7 +90,7 @@ def adjust_gamma_func(img:Image, gamma:float=1, gain:float=1) -> Layer:
     '''
     
 
-def adjust_log(img:Image, gain:float=1, inv:bool=False, gpu:bool=True) -> Layer:
+def adjust_log(img:Image, gain:float=1, inv:bool=False, pt_K:bool=True) -> Layer:
     """Pass through function of skimage.exposure adjust_log function.
     
     Args:
@@ -102,11 +102,11 @@ def adjust_log(img:Image, gain:float=1, inv:bool=False, gpu:bool=True) -> Layer:
     Returns:
         Logarithm corrected output image with '_LC' suffix added to name."""
     
-    adjust_log_thread(img=img,gain=gain,inv=inv,gpu=gpu)
+    adjust_log_thread(img=img,gain=gain,inv=inv,pt_K=pt_K)
     #return
 
 @thread_worker(connect={"returned": viewer.add_layer},progress=True)
-def adjust_log_thread(img:Image, gain:float=1, inv:bool=False, gpu:bool=True) -> Layer:
+def adjust_log_thread(img:Image, gain:float=1, inv:bool=False, pt_K:bool=True) -> Layer:
     """Pass through function of skimage.exposure adjust_log function.
     
     Args:
@@ -119,7 +119,7 @@ def adjust_log_thread(img:Image, gain:float=1, inv:bool=False, gpu:bool=True) ->
         Logarithm corrected output image with '_LC' suffix added to name."""
     
     show_info(f"Adjust log thread started")
-    if gpu:
+    if pt_K:
         output = adjust_log_pt_func(img=img,gain=gain,inv=inv)
         torch.cuda.empty_cache()
         memory_stats()
@@ -145,9 +145,9 @@ def adjust_log_func(img:Image, gain:float=1, inv:bool=False) -> Layer:
     data = img.data.copy()
 
     try:
-        assert data.ndim == 2 or data.ndim == 3, "Only works for data of 2 or 3 diminsions"
+        assert (data.ndim == 2 or data.ndim == 3), "Only works for data of 2 or 3 dimensions"
     except AssertionError as e:
-        print("An error Occured:", str(e))
+        raise Exception("An error Occured:", str(e))
     else:
         
         name = f"{img.name}_LC"
@@ -163,7 +163,7 @@ def adjust_log_func(img:Image, gain:float=1, inv:bool=False) -> Layer:
 
             layer = Layer.create(data,add_kwargs,layer_type)
 
-    return layer
+        return layer
 
 def adjust_log_pt_func(img:Image, gain:float=1, inv:bool=False, clip_output:bool=True) -> Layer:
     """Pass through function of kornia.enhance adjust_log function.
@@ -184,11 +184,17 @@ def adjust_log_pt_func(img:Image, gain:float=1, inv:bool=False, clip_output:bool
     add_kwargs = {"name": f"{name}"}
 
     data = img.data.copy()
-    pt_data = torch.tensor(data,device=device)
 
-    log_corrected = adjust_log(pt_data,gain=gain,inv=inv)
-    out_data = log_corrected.detach().cpu().numpy()
+    try:
+        assert (data.ndim == 2 or data.ndim == 3), "Only works for data of 2 or 3 dimensions"
+    except AssertionError as e:
+        raise Exception("An error Occured:", str(e))
+    else:
+        pt_data = torch.tensor(data,device=device)
 
-    layer = Layer.create(out_data,add_kwargs,layer_type)
+        log_corrected = adjust_log(pt_data,gain=gain,inv=inv)
+        out_data = log_corrected.detach().cpu().numpy()
 
-    return layer
+        layer = Layer.create(out_data,add_kwargs,layer_type)
+
+        return layer
