@@ -37,8 +37,8 @@ def normalize_in_range_thread(img: Image, min_val:float = 0.0, max_val:float = 1
         Image with normalized values mapped between range of min_val and max_val is in_place
     """
     show_info(f"Normalization thread started")
-    #output = normalize_in_range_func(img=img,min_val=min_val,max_val=max_val,in_place=in_place)
-    output = normalize_in_range_pt_func(img=img,min_val=min_val,max_val=max_val,in_place=in_place)
+    output = normalize_in_range_func(img=img,min_val=min_val,max_val=max_val,in_place=in_place)
+    #output = normalize_in_range_pt_func(img=img,min_val=min_val,max_val=max_val,in_place=in_place)
     torch.cuda.empty_cache()
     memory_stats()
     show_info(f"Normalization thread completed")
@@ -106,7 +106,26 @@ def normalize_in_range_pt_func(img: Image, min_val:float = 0.0, max_val:float = 
         layer_type = "image"
         layer = Layer.create(norm_data.detach().cpu().numpy(),add_kwargs,layer_type)
         return layer
+
+def normalize_data_in_range_func(img: ImageData, min_val:float = 0.0, max_val:float = 1.0) -> ImageData:
+    """Function to map image/B-scan values to a specific range between min_val and max_val.
+
+    Args:
+        img (Image): ndarray representing image data
+        min_val (float): minimum value of range that image values are to be mapped to
+        max_val (float): maximum value of range that image values are to be mapped to
+        numpy_out (bool): flag indicating whether to return torch tensor or numpy ndarray
+
+    Returns:
+        Image with normalized values mapped between range of min_val and max_val is in_place
+    """
     
+    data = img
+    norm_data = (max_val - min_val) * ((data-data.min())/ (data.max()-data.min())) + min_val
+
+    out = norm_data
+
+    return out    
     
 def normalize_data_in_range_pt_func(img: ImageData, min_val:float = 0.0, max_val:float = 1.0, numpy_out:bool = True) -> ImageData:
     """Function to map image/B-scan values to a specific range between min_val and max_val.
