@@ -1,6 +1,7 @@
 """
 This module contains code for equalizing image values
 """
+import numpy as np
 from tqdm import tqdm
 from napari.utils.notifications import show_info
 from napari.layers import Image, Layer
@@ -104,3 +105,15 @@ def clahe_pt_func(img:Image, kernel_size=None,clip_limit:float=40.0,nbins=256,no
             layer = Layer.create(out_data,add_kwargs,layer_type)
 
         return layer
+    
+def match_histogram(target_histogram:Image,debug:bool=False):
+    """"""
+    from skimage.exposure import match_histograms
+
+    target_data = target_histogram.data
+    current_selection = list(viewer.layers.selection)
+    
+    for layer in current_selection:
+        matched = match_histograms(layer.data,target_data,channel_axis=-1)
+        layer.data[:] = matched[:]
+    return layer

@@ -17,6 +17,9 @@ contributions:
     - id: napari-cool-tools-img-proc.clahe
       title: Contrast Limited Adaptive Histogram Equalization
       python_name: napari_cool_tools_img_proc._equalization:clahe
+    - id: napari-cool-tools-img-proc.match_histogram
+      title: Match Histograms
+      python_name: napari_cool_tools_img_proc._equalization:match_histogram
     - id: napari-cool-tools-img-proc.denoise_tv
       title: Total Variation Denoising (Chambolle)
       python_name: napari_cool_tools_img_proc._denoise:denoise_tv
@@ -29,6 +32,7 @@ contributions:
     - id: napari-cool-tools-img-proc.median
       title: Median Blur
       python_name: napari_cool_tools_img_proc._filters:filter_median
+
   widgets:
     - command: napari-cool-tools-img-proc.diff_of_gaus
       display_name: Band-pass (DoG)
@@ -44,6 +48,9 @@ contributions:
       display_name: Log Adjust
     - command: napari-cool-tools-img-proc.clahe
       display_name: contrast (CLAHE)
+      autogenerate: true
+    - command: napari-cool-tools-img-proc.match_histogram
+      display_name: Match Histograms
       autogenerate: true
     - command: napari-cool-tools-img-proc.denoise_tv
       display_name: TVD (Chambolle)
