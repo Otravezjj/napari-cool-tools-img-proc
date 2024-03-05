@@ -60,7 +60,7 @@ def adjust_gamma_func(img:Image, gamma:float=1, gain:float=1) -> Layer:
         print("An error Occured:", str(e))
     else:
         
-        name = f"{img.name}_LC"
+        name = f"{img.name}_GC"
         layer_type = "image"
         add_kwargs = {"name": f"{name}"}
 
