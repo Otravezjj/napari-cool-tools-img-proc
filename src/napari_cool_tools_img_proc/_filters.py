@@ -2,6 +2,8 @@
 This module contains code for filtering images
 """
 from tqdm import tqdm
+from enum import Enum
+from numpy import ndarray
 from napari.utils.notifications import show_info
 from napari.layers import Image, Layer
 from napari.qt.threading import thread_worker
@@ -212,11 +214,11 @@ def filter_median_thread(img:Image,kernel_size:int=3)-> Image:
     Returns:
         Image Layer that has median blur  with '_Med_(kernel_size)' suffix added to name.
     """
-    show_info(f'Unsharp Mask Filter thread has started')
+    show_info(f'Median Filter thread has started')
     output = filter_median_pt_func(img=img,kernel_size=kernel_size)
     torch.cuda.empty_cache()
     memory_stats()
-    show_info(f'Unsharp Mask Filter thread has completed')
+    show_info(f'Median Filter thread has completed')
     return output
 
 def filter_median_pt_func(img:Image,kernel_size:int=3)-> Image:
@@ -254,7 +256,7 @@ def filter_median_pt_func(img:Image,kernel_size:int=3)-> Image:
             out_data = um_data.detach().cpu().numpy()
             layer = Layer.create(out_data,add_kwargs,layer_type)
         elif data.ndim == 3:
-            for i in tqdm(range(len(pt_data)),desc="Unsharp Mask"):
+            for i in tqdm(range(len(pt_data)),desc="Median Filter"):
                 in_data = pt_data[i].unsqueeze(0).unsqueeze(0)
                 pt_data[i] = median_blur(in_data,(kernel_size,kernel_size)).squeeze()
 
@@ -262,4 +264,111 @@ def filter_median_pt_func(img:Image,kernel_size:int=3)-> Image:
             layer = Layer.create(out_data,add_kwargs,layer_type)
 
         return layer
+
+class KnBorderType(Enum):
+    """Enum for Kornia border_type parameter."""
+    constant = 'constant'
+    reflect = 'reflect'
+    replicate = 'replicate'
+    circular = 'circular'
+
+def filter_gaussian_blur_plg(img:Image,kernel_size:int=3,sigma:float=1,border_type:KnBorderType=KnBorderType.reflect,separable:bool=True):
+    """Implementation of Kornia's gausian blur filter function
+    Args:
+        img (Image): Image/Volume to be segmented.
+        kernel_size (int): Dimension of symmetrical kernel for Kornia implementation kernel should be odd number
+        sigma (int): standard deviation of the kernel
+        border_type (KnBorderType(Enum)): padding mode applied prior to convolution options = 'constant', 'reflect', 'replicate' or 'circular'
+        separable (bool): run as composition of 2 1D convolutions
         
+    Returns:
+        Image Layer that has gaussian blur  with '_GB_(kernel_size)' suffix added to name.
+    """
+
+    filter_gaussian_blur_thread(img=img,kernel_size=kernel_size,sigma=sigma,border_type=border_type.value,separable=separable)
+
+    return
+
+@thread_worker(connect={"returned": viewer.add_layer},progress=True)
+def filter_gaussian_blur_thread(img:Image,kernel_size:int=3,sigma:float=1,border_type:str='reflect',separable:bool=True)->Image:
+    """Implementation of Kornia's gausian blur filter function
+    Args:
+        img (Image): Image/Volume to be segmented.
+        kernel_size (int): Dimension of symmetrical kernel for Kornia implementation kernel should be odd number
+        sigma (int): standard deviation of the kernel
+        border_type (KnBorderType(Enum)): padding mode applied prior to convolution options = 'constant', 'reflect', 'replicate' or 'circular'
+        separable (bool): run as composition of 2 1D convolutions
+        
+    Returns:
+        Image Layer that has gaussian blur  with '_GB_(kernel_size)' suffix added to name.
+    """
+    show_info(f'Gaussian Blur Filter thread has started')
+
+    name = img.name
+
+    # optional kwargs for viewer.add_* method
+    add_kwargs = {"name": f"{name}_GBlur_{kernel_size}"}
+
+    # optional layer type argument
+    layer_type = "image"
+    data = img.data.copy()
+    out_data = filter_gaussian_blur_kn(data=data,kernel_size=kernel_size,sigma=sigma,border_type=border_type,separable=separable)
+    output = Layer.create(out_data,add_kwargs,layer_type)
+
+    torch.cuda.empty_cache()
+    memory_stats()
+    show_info(f'Gaussian Blur Filter thread has completed')
+
+    return output
+
+
+def filter_gaussian_blur_kn(data:ndarray,kernel_size:int=3,sigma:float=1.0,border_type:str='reflect',separable:bool=True)-> ndarray:
+    """Implementation of Kornia's gausian blur filter function
+    Args:
+        img (Image): Image/Volume to be segmented.
+        kernel_size (int): Dimension of symmetrical kernel for Kornia implementation kernel should be odd number
+        sigma (float): standard deviation of the kernel
+        border_type (KnBorderType(Enum)): padding mode applied prior to convolution options = 'constant', 'reflect', 'replicate' or 'circular'
+        separable (bool): run as composition of 2 1D convolutions
+        
+    Returns:
+        Image Layer that has gaussian blur  with '_GB_(kernel_size)' suffix added to name.
+    """
+    from kornia.filters import gaussian_blur2d
+    
+    try:
+        assert data.ndim == 2 or data.ndim == 3, "Only works for data of 2 or 3 dimensions"
+    except AssertionError as e:
+        print("An error Occured:", str(e))
+    else:
+
+        pt_data = torch.tensor(data,device=device)
+
+        if data.ndim == 2:
+            in_data = pt_data.unsqueeze(0).unsqueeze(0)
+            blur_data = gaussian_blur2d(in_data,(kernel_size,kernel_size),(sigma,sigma),border_type,separable).squeeze()
+            out_data = blur_data.detach().cpu().numpy()
+            
+        elif data.ndim == 3:
+            for i in tqdm(range(len(pt_data)),desc="Gaussian Blur Filter"):
+                in_data = pt_data[i].unsqueeze(0).unsqueeze(0)
+                pt_data[i] = gaussian_blur2d(in_data,(kernel_size,kernel_size),(sigma,sigma),border_type,separable).squeeze()
+
+            out_data = pt_data.detach().cpu().numpy()
+
+        return out_data
+        
+
+        '''''
+        name = img.name
+
+        # optional kwargs for viewer.add_* method
+        add_kwargs = {"name": f"{name}_Med_{kernel_size}"}
+
+        # optional layer type argument
+        layer_type = "image"
+
+        data = img.data.copy()
+
+        layer = Layer.create(out_data,add_kwargs,layer_type)
+        '''
