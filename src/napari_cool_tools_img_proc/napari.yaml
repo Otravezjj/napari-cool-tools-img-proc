@@ -32,6 +32,15 @@ contributions:
     - id: napari-cool-tools-img-proc.median
       title: Median Blur
       python_name: napari_cool_tools_img_proc._filters:filter_median
+    - id: napari-cool-tools-img-proc.gblur
+      title: Gaussian Blur
+      python_name: napari_cool_tools_img_proc._filters:filter_gaussian_blur_plg
+    - id: napari-cool-tools-img-proc.pad2D
+      title: Pad 2D
+      python_name: napari_cool_tools_img_proc._nn_tools_2D:pad_image2D_plg
+    - id: napari-cool-tools-img-proc.pooling
+      title: Pooling 2D
+      python_name: napari_cool_tools_img_proc._nn_tools_2D:pool_2D_plg
 
   widgets:
     - command: napari-cool-tools-img-proc.diff_of_gaus
@@ -63,4 +72,13 @@ contributions:
       autogenerate: true
     - command: napari-cool-tools-img-proc.median
       display_name: Median Blur
+      autogenerate: true
+    - command: napari-cool-tools-img-proc.gblur
+      display_name: Gaussian Blur
+      autogenerate: true
+    - command: napari-cool-tools-img-proc.pad2D
+      display_name: Pad 2D
+      autogenerate: true
+    - command: napari-cool-tools-img-proc.pooling
+      display_name: Pooling 2D
       autogenerate: true
